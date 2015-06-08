@@ -4,7 +4,9 @@
 #
 class glusterfs::install {
 
-  package { $::glusterfs::package_name:
+  $package_name = $::glusterfs::package_name
+
+  package { $package_name:
     ensure => present,
   }
 }

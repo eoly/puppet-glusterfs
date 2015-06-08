@@ -5,7 +5,9 @@
 #
 class glusterfs::service {
 
-  service { $::glusterfs::service_name:
+  $service_name = $::glusterfs::service_name
+
+  service { $service_name:
     ensure     => running,
     enable     => true,
     hasstatus  => true,
