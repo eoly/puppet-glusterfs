@@ -1,31 +1,21 @@
 # == Class: glusterfs
 #
-# Puppet module to install glusterfs
+# Full description of class glusterfs here.
 #
 # === Parameters
 #
-# [*upstream*]
-#   Install upstream glusterfs repositories.
+# [*sample_parameter*]
+#   Explanation of what this parameter affects and what it defaults to.
 #
-# === Examples
-#
-#  class { glusterfs:
-#    upstream => false,
-#    server   => false
-#  }
-#
-# === Authors
-#
-# Jared Curtis
-# Merritt Krakowitzer
-#
-# === Copyright
-#
-# Copyright 2013
-#
-class glusterfs(
-  $upstream = true,
-) {
-  class { 'glusterfs::package': } ~>
-  class { 'glusterfs::service': }
+class glusterfs (
+  $package_name = $::glusterfs::params::package_name,
+  $service_name = $::glusterfs::params::service_name,
+) inherits ::glusterfs::params {
+
+  # validate parameters here
+
+  class { '::glusterfs::install': } ->
+  class { '::glusterfs::config': } ~>
+  class { '::glusterfs::service': } ->
+  Class['::glusterfs']
 }
