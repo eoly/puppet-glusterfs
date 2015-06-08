@@ -4,57 +4,89 @@
 2. [Module Description - What the module does and why it is useful](#module-description)
 3. [Setup - The basics of getting started with glusterfs](#setup)
     * [What glusterfs affects](#what-glusterfs-affects)
-    * [Setup requirements](#setup-requirements)
     * [Beginning with glusterfs](#beginning-with-glusterfs)
 4. [Usage - Configuration options and additional functionality](#usage)
 5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 5. [Limitations - OS compatibility, etc.](#limitations)
-6. [Development - Guide for contributing to the module](#development)
 
 ## Overview
 
-A one-maybe-two sentence summary of what the module does/what problem it solves. This is your 30 second elevator pitch for your module. Consider including OS/Puppet version it works with.       
+GlusterFS Puppet Module
 
 ## Module Description
 
-If applicable, this section should have a brief description of the technology the module integrates with and what that integration enables. This section should answer the questions: "What does this module *do*?" and "Why would I use it?"
-
-If your module has a range of functionality (installation, configuration, management, etc.) this is the time to mention it.
+This module manages the GlusterFS repository, package installation, and service. There are also custom types and providers for managing a Gluster cluster that can be used in your profile classes.
 
 ## Setup
 
 ### What glusterfs affects
 
-* A list of files, packages, services, or operations that the module will alter, impact, or execute on the system it's installed on.
-* This is a great place to stick any warnings.
-* Can be in list or paragraph form. 
-
-### Setup Requirements **OPTIONAL**
-
-If your module requires anything extra before setting up (pluginsync enabled, etc.), mention it here. 
+* Optionally installs and enables GlusterFS official package repository
+* Installs the GlusterFS operating system package
+* Manages the GlusterFS service
 
 ### Beginning with glusterfs
 
-The very basic steps needed for a user to get the module up and running. 
+To install the GlusterFS repo, package, and manage the service you simply declare the `glusterfs` class.
 
-If your most recent release breaks compatibility or requires particular steps for upgrading, you may wish to include an additional section here: Upgrading (For an example, see http://forge.puppetlabs.com/puppetlabs/firewall).
+~~~puppet
+class { 'glusterfs': }
+~~~
 
 ## Usage
 
-Put the classes, types, and resources for customizing, configuring, and doing the fancy stuff with your module here. 
+~~~puppet
+node /storage/ {
+  class { 'glusterfs': }
+  glusterfs_pool { ['192.168.1.100', '192.168.1.101']: } ->
+  glusterfs_vol { 'data':
+    replica => 2,
+    brick   => ['192.168.1.100:/mnt/brick', '192.168.1.101:/mnt/brick'],
+  }
+}
+~~~
 
 ## Reference
 
-Here, list the classes, types, providers, facts, etc contained in your module. This section should include all of the under-the-hood workings of your module so people know what the module is touching on their system but don't need to mess with things. (We are working on automating this section!)
+### Classes
+
+#### Public Classes
+
+* [`glusterfs`](#class-glusterfs)
+
+#### Private Classes
+
+* [`glusterfs::repo`]: Manages the GlusterFS package repo
+* [`glusterfs::install`]: Installs the GlusterFS package
+* [`glusterfs::service`]: Manages the GlusterFS service
+
+### Types
+
+* [`glusterfs_pool`](#type-glusterfs_pool)
+* [`glusterfs_vol`](#type-glusterfs_vol)
+
+#### Class: `glusterfs`
+
+Main class, includes all other classes.
+
+#### Parameters (all optional)
+
+* `package_name`: Name of the GlusterFS package. Valid options: a string containing package name.
+* `service_name`: Name of the GlusterFS service. Valid options: a string containing service name.
+* `install_repo`: Specifies whether to install the GlusterFS repo. Valid options: 'true' and 'false'. Default: 'true'.
+* `enable_repo`: Specifies whether to enable the GlusterFS repo. Valid options: 'true' and 'false'. Default: 'true'.
+* `repo_url`: The URL of the GlusterFS package repo. Valid options: a string containing a URL.
+* `repo_key_url`: The URL of the GlusterFS package repo public key. Valid options: a string containing a URL.
+* `repo_key_check`: Specifies whether to validate GlusterFS package signatures. Valid options: 'true' and 'false'. Default: 'true'.
+
+### Type: `glusterfs_pool`
+
+Manages a GlusterFS pool
+
+### Type: `glusterfs_vol`
+
+Manages a GlusterFS volume
 
 ## Limitations
 
-This is where you list OS compatibility, version compatibility, etc.
-
-## Development
-
-Since your module is awesome, other users will want to play with it. Let them know what the ground rules for contributing are.
-
-## Release Notes/Contributors/Etc **Optional**
-
-If you aren't using changelog, put your release notes here (though you should consider using changelog). You may also add any additional sections you feel are necessary or important to include here. Please use the `## ` header. 
+Currenly supporting RHEL based systems only.
