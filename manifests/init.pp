@@ -19,8 +19,8 @@ class glusterfs (
 
   # validate parameters here
 
+  class { '::glusterfs::repo': } ->
   class { '::glusterfs::install': } ->
-  class { '::glusterfs::config': } ~>
   class { '::glusterfs::service': } ->
   Class['::glusterfs']
 }
