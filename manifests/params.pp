@@ -5,13 +5,15 @@
 #
 class glusterfs::params {
   case $::osfamily {
-    'Debian': {
-      $package_name = 'glusterfs'
-      $service_name = 'glusterfs'
-    }
     'RedHat', 'Amazon': {
-      $package_name = 'glusterfs'
-      $service_name = 'glusterfs'
+      $package_name   = 'glusterfs-server'
+      $service_name   = 'glusterd'
+      $install_repo   = true
+      $enable_repo    = true
+      $repo_provider  = 'yum'
+      $repo_url       = 'http://download.gluster.org/pub/gluster/glusterfs/LATEST/EPEL.repo/epel-$releasever/$basearch/'
+      $repo_key_url   = 'http://download.gluster.org/pub/gluster/glusterfs/LATEST/EPEL.repo/pub.key'
+      $repo_key_check = true
     }
     default: {
       fail("${::operatingsystem} not supported")
