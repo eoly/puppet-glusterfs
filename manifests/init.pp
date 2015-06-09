@@ -18,6 +18,13 @@ class glusterfs (
 ) inherits ::glusterfs::params {
 
   # validate parameters here
+  validate_string($package_name)
+  validate_string($service_name)
+  validate_bool($install_repo)
+  validate_bool($enable_repo)
+  validate_re($repo_url, [ '^http://.*', '^https://.*' ])
+  validate_re($repo_key_url, [ '^http://.*', '^https://.*' ])
+  validate_bool($repo_key_check)
 
   class { '::glusterfs::repo': } ->
   class { '::glusterfs::install': } ->
